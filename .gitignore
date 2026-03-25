@@ -1,0 +1,9 @@
+.DS_Store
+*.sql
+
+# Local WP config (contains secrets)
+wp-config.php
+
+# Uploads are environment-specific
+wp-content/uploads/
+
