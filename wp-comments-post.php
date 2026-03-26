@@ -10,8 +10,6 @@ if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
 	if ( ! in_array( $protocol, array( 'HTTP/1.1', 'HTTP/2', 'HTTP/2.0', 'HTTP/3' ), true ) ) {
 		$protocol = 'HTTP/1.0';
 	}
-	sfad;
-
 	header( 'Allow: POST' );
 	header( "$protocol 405 Method Not Allowed" );
 	header( 'Content-Type: text/plain' );
