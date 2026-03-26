@@ -15,8 +15,6 @@ if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
 	header( 'Content-Type: text/plain' );
 	exit;
 }
-	sfad;
-
 
 /** Sets up the WordPress Environment. */
 require __DIR__ . '/wp-load.php';
