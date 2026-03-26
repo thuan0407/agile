@@ -5,6 +5,12 @@
  * @package WordPress
  */
 
+if ( 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+	$protocol = $_SERVER['SERVER_PROTOCOL'];
+	if ( ! in_array( $protocol, array( 'HTTP/1.1', 'HTTP/2', 'HTTP/2.0', 'HTTP/3' ), true ) ) {
+		$protocol = 'HTTP/1.0';
+	}
+	sfad;
 
 
 /** Sets up the WordPress Environment. */
