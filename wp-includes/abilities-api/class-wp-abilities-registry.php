@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abilities API
  *
@@ -9,7 +10,7 @@
  * @since 6.9.0
  */
 
-declare( strict_types = 1 );
+declare(strict_types=1);
 
 /**
  * Manages the registration and lookup of abilities.
@@ -17,7 +18,8 @@ declare( strict_types = 1 );
  * @since 6.9.0
  * @access private
  */
-final class WP_Abilities_Registry {
+final class WP_Abilities_Registry
+{
 	/**
 	 * The singleton instance of the registry.
 	 *
@@ -77,8 +79,9 @@ final class WP_Abilities_Registry {
 	 * }
 	 * @return WP_Ability|null The registered ability instance on success, null on failure.
 	 */
-	public function register( string $name, array $args ): ?WP_Ability {
-		if ( ! preg_match( '/^[a-z0-9-]+\/[a-z0-9-]+$/', $name ) ) {
+	public function register(string $name, array $args): ?WP_Ability
+	{
+		if (! preg_match('/^[a-z0-9-]+\/[a-z0-9-]+$/', $name)) {
 			_doing_it_wrong(
 				__METHOD__,
 				__(
@@ -89,11 +92,11 @@ final class WP_Abilities_Registry {
 			return null;
 		}
 
-		if ( $this->is_registered( $name ) ) {
+		if ($this->is_registered($name)) {
 			_doing_it_wrong(
 				__METHOD__,
 				/* translators: %s: Ability name. */
-				sprintf( __( 'Ability "%s" is already registered.' ), esc_html( $name ) ),
+				sprintf(__('Ability "%s" is already registered.'), esc_html($name)),
 				'6.9.0'
 			);
 			return null;
@@ -126,18 +129,18 @@ final class WP_Abilities_Registry {
 		 * }
 		 * @param string               $name The name of the ability, with its namespace.
 		 */
-		$args = apply_filters( 'wp_register_ability_args', $args, $name );
+		$args = apply_filters('wp_register_ability_args', $args, $name);
 
 		// Validate ability category exists if provided (will be validated as required in WP_Ability).
-		if ( isset( $args['category'] ) ) {
-			if ( ! wp_has_ability_category( $args['category'] ) ) {
+		if (isset($args['category'])) {
+			if (! wp_has_ability_category($args['category'])) {
 				_doing_it_wrong(
 					__METHOD__,
 					sprintf(
 						/* translators: %1$s: ability category slug, %2$s: ability name */
-						__( 'Ability category "%1$s" is not registered. Please register the ability category before assigning it to ability "%2$s".' ),
-						esc_html( $args['category'] ),
-						esc_html( $name )
+						__('Ability category "%1$s" is not registered. Please register the ability category before assigning it to ability "%2$s".'),
+						esc_html($args['category']),
+						esc_html($name)
 					),
 					'6.9.0'
 				);
@@ -146,10 +149,10 @@ final class WP_Abilities_Registry {
 		}
 
 		// The class is only used to instantiate the ability, and is not a property of the ability itself.
-		if ( isset( $args['ability_class'] ) && ! is_a( $args['ability_class'], WP_Ability::class, true ) ) {
+		if (isset($args['ability_class']) && ! is_a($args['ability_class'], WP_Ability::class, true)) {
 			_doing_it_wrong(
 				__METHOD__,
-				__( 'The ability args should provide a valid `ability_class` that extends WP_Ability.' ),
+				__('The ability args should provide a valid `ability_class` that extends WP_Ability.'),
 				'6.9.0'
 			);
 			return null;
@@ -157,12 +160,12 @@ final class WP_Abilities_Registry {
 
 		/** @var class-string<WP_Ability> */
 		$ability_class = $args['ability_class'] ?? WP_Ability::class;
-		unset( $args['ability_class'] );
+		unset($args['ability_class']);
 
 		try {
 			// WP_Ability::prepare_properties() will throw an exception if the properties are invalid.
-			$ability = new $ability_class( $name, $args );
-		} catch ( InvalidArgumentException $e ) {
+			$ability = new $ability_class($name, $args);
+		} catch (InvalidArgumentException $e) {
 			_doing_it_wrong(
 				__METHOD__,
 				$e->getMessage(),
@@ -171,7 +174,7 @@ final class WP_Abilities_Registry {
 			return null;
 		}
 
-		$this->registered_abilities[ $name ] = $ability;
+		$this->registered_abilities[$name] = $ability;
 		return $ability;
 	}
 
@@ -187,19 +190,20 @@ final class WP_Abilities_Registry {
 	 * @param string $name The name of the registered ability, with its namespace.
 	 * @return WP_Ability|null The unregistered ability instance on success, null on failure.
 	 */
-	public function unregister( string $name ): ?WP_Ability {
-		if ( ! $this->is_registered( $name ) ) {
+	public function unregister(string $name): ?WP_Ability
+	{
+		if (! $this->is_registered($name)) {
 			_doing_it_wrong(
 				__METHOD__,
 				/* translators: %s: Ability name. */
-				sprintf( __( 'Ability "%s" not found.' ), esc_html( $name ) ),
+				sprintf(__('Ability "%s" not found.'), esc_html($name)),
 				'6.9.0'
 			);
 			return null;
 		}
 
-		$unregistered_ability = $this->registered_abilities[ $name ];
-		unset( $this->registered_abilities[ $name ] );
+		$unregistered_ability = $this->registered_abilities[$name];
+		unset($this->registered_abilities[$name]);
 
 		return $unregistered_ability;
 	}
@@ -215,7 +219,8 @@ final class WP_Abilities_Registry {
 	 *
 	 * @return WP_Ability[] The array of registered abilities.
 	 */
-	public function get_all_registered(): array {
+	public function get_all_registered(): array
+	{
 		return $this->registered_abilities;
 	}
 
@@ -231,8 +236,9 @@ final class WP_Abilities_Registry {
 	 * @param string $name The name of the registered ability, with its namespace.
 	 * @return bool True if the ability is registered, false otherwise.
 	 */
-	public function is_registered( string $name ): bool {
-		return isset( $this->registered_abilities[ $name ] );
+	public function is_registered(string $name): bool
+	{
+		return isset($this->registered_abilities[$name]);
 	}
 
 	/**
@@ -247,17 +253,18 @@ final class WP_Abilities_Registry {
 	 * @param string $name The name of the registered ability, with its namespace.
 	 * @return WP_Ability|null The registered ability instance, or null if it is not registered.
 	 */
-	public function get_registered( string $name ): ?WP_Ability {
-		if ( ! $this->is_registered( $name ) ) {
+	public function get_registered(string $name): ?WP_Ability
+	{
+		if (! $this->is_registered($name)) {
 			_doing_it_wrong(
 				__METHOD__,
 				/* translators: %s: Ability name. */
-				sprintf( __( 'Ability "%s" not found.' ), esc_html( $name ) ),
+				sprintf(__('Ability "%s" not found.'), esc_html($name)),
 				'6.9.0'
 			);
 			return null;
 		}
-		return $this->registered_abilities[ $name ];
+		return $this->registered_abilities[$name];
 	}
 
 	/**
@@ -269,13 +276,14 @@ final class WP_Abilities_Registry {
 	 *
 	 * @return WP_Abilities_Registry|null The main registry instance, or null when `init` action has not fired.
 	 */
-	public static function get_instance(): ?self {
-		if ( ! did_action( 'init' ) ) {
+	public static function get_instance(): ?self
+	{
+		if (! did_action('init')) {
 			_doing_it_wrong(
 				__METHOD__,
 				sprintf(
 					// translators: %s: init action.
-					__( 'Ability API should not be initialized before the %s action has fired.' ),
+					__('Ability API should not be initialized before the %s action has fired.'),
 					'<code>init</code>'
 				),
 				'6.9.0'
@@ -283,7 +291,7 @@ final class WP_Abilities_Registry {
 			return null;
 		}
 
-		if ( null === self::$instance ) {
+		if (null === self::$instance) {
 			self::$instance = new self();
 
 			// Ensure ability category registry is initialized first to allow categories to be registered
@@ -300,7 +308,7 @@ final class WP_Abilities_Registry {
 			 *
 			 * @param WP_Abilities_Registry $instance Abilities registry object.
 			 */
-			do_action( 'wp_abilities_api_init', self::$instance );
+			do_action('wp_abilities_api_init', self::$instance);
 		}
 
 		return self::$instance;
@@ -313,8 +321,9 @@ final class WP_Abilities_Registry {
 	 * @throws LogicException If the registry object is unserialized.
 	 *                        This is a security hardening measure to prevent unserialization of the registry.
 	 */
-	public function __wakeup(): void {
-		throw new LogicException( __CLASS__ . ' should never be unserialized.' );
+	public function __wakeup(): void
+	{
+		throw new LogicException(__CLASS__ . ' should never be unserialized.');
 	}
 
 	/**
@@ -324,7 +333,8 @@ final class WP_Abilities_Registry {
 	 * @throws LogicException If the registry object is serialized.
 	 *                        This is a security hardening measure to prevent serialization of the registry.
 	 */
-	public function __sleep(): array {
-		throw new LogicException( __CLASS__ . ' should never be serialized.' );
+	public function __sleep(): array
+	{
+		throw new LogicException(__CLASS__ . ' should never be serialized.');
 	}
 }
